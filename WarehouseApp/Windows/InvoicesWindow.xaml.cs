@@ -31,21 +31,23 @@ namespace WarehouseApp
 
         private void LoadData()
         {
+            InvoicesPanel.Children.Clear();
             using (var db = new EntityModel())
             {
                 List<Invoice> invoices = db.Invoice.ToList();
                 foreach(var invoice in invoices)
                 {
                     var mainPanel = new Grid();
-                    mainPanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(150)});
+                    mainPanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(100)});
                     mainPanel.ColumnDefinitions.Add(new ColumnDefinition());
-                    mainPanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(150) });
+                    mainPanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(180) });
 
                     mainPanel.RowDefinitions.Add(new RowDefinition());
                     mainPanel.RowDefinitions.Add(new RowDefinition());
                     mainPanel.RowDefinitions.Add(new RowDefinition());
+                    mainPanel.RowDefinitions.Add(new RowDefinition());
 
-                    var txtId = new TextBlock() { Foreground = Brushes.Orange, Text = "№ " };
+                    var txtId = new TextBlock() { Foreground = Brushes.Orange, Text = "№ ", FontWeight = FontWeights.Bold};
                     var txtName = new TextBlock() { Text = "Получатель: " };
                     var txtAddress = new TextBlock() { Text = "Пункт назначения: " };
 
@@ -58,7 +60,7 @@ namespace WarehouseApp
                     gridGoods.Columns.Add(new DataGridTextColumn() { Header = "Цена", Binding = new Binding("Price") });
 
                     int price = 0;
-                    foreach(var productInvoice in db.InvoiceProduct.Where(v => v.InvoiceId == invoice.InvoiceId))
+                    foreach(var productInvoice in db.InvoiceProduct.Where(obj => obj.InvoiceId == invoice.InvoiceId))
                     {
                         var good = db.Product.Find(productInvoice.ProductId);
                         price += productInvoice.Price;
@@ -66,33 +68,64 @@ namespace WarehouseApp
                     }
                     gridGoods.ItemsSource = goodsList;
 
-                    var txtPrice = new TextBlock() { Foreground = Brushes.Orange, Text = $"Общая цена: {price} руб.", TextAlignment = TextAlignment.Right, VerticalAlignment = VerticalAlignment.Bottom };
+                    var txtPrice = new TextBlock() {FontWeight = FontWeights.Bold, Text = $"Общая цена: {price} руб.", TextAlignment = TextAlignment.Right, VerticalAlignment = VerticalAlignment.Bottom };
+                    var btnEdit = new Button() { Content = "Изменить", Tag = invoice };
+                    btnEdit.Click += BtnEdit_Click;
+                    var btnDelete = new Button() { Content = "Удалить", Tag = invoice };
+                    btnDelete.Click += BtnDelete_Click;
 
                     txtId.Text += invoice.InvoiceId.ToString();
                     txtName.Text += db.Recipient.Find(invoice.RecipientId).Name;
                     txtAddress.Text += db.Destination.Find(invoice.DestinitonId).Address;
 
-                    Grid.SetRow(txtName, 1);
-                    Grid.SetRow(txtAddress, 2);
-                    Grid.SetRow(txtPrice, 2);
-                    Grid.SetColumn(txtPrice, 2);
+                    Grid.SetRow(txtAddress, 1);
+                    Grid.SetRow(gridGoods, 2);
+                    Grid.SetRow(btnEdit, 1);
+                    Grid.SetRow(btnDelete, 2);
+                    Grid.SetRow(txtPrice, 3);
+                    Grid.SetColumn(txtPrice, 1);
+                    Grid.SetColumn(btnEdit, 2);
+                    Grid.SetColumn(btnDelete, 2);
+                    Grid.SetColumn(txtName, 1);
+                    Grid.SetColumn(txtAddress, 1);
                     Grid.SetColumn(gridGoods, 1);
-                    Grid.SetRowSpan(gridGoods, 3);
 
                     mainPanel.Children.Add(txtId);
-                    mainPanel.Children.Add(new Control());
-                    mainPanel.Children.Add(new Control());
                     mainPanel.Children.Add(txtName);
-                    mainPanel.Children.Add(new Control());
-                    mainPanel.Children.Add(new Control());
+                    mainPanel.Children.Add(btnEdit);
+                    mainPanel.Children.Add(btnDelete);
                     mainPanel.Children.Add(txtAddress);
                     mainPanel.Children.Add(gridGoods);
                     mainPanel.Children.Add(txtPrice);
 
-                    InvoicesDataGrid.Children.Add(mainPanel);
+                    InvoicesPanel.Children.Add(mainPanel);
                 }
             }
 
+        }
+
+        private void BtnDelete_Click(object sender, RoutedEventArgs e)
+        {
+            var result = MessageBox.Show("Вы действительно хотите удалить это объект?","Внимание", MessageBoxButton.YesNo);
+            if(result == MessageBoxResult.Yes)
+            {
+                using(var db = new EntityModel())
+                {
+                    var invoice = (sender as Button).Tag as Invoice;
+                    db.Entry(invoice).State = System.Data.Entity.EntityState.Deleted;
+                    foreach (var invoiceProduct in db.InvoiceProduct.Where(obj => obj.InvoiceId == invoice.InvoiceId))
+                    {
+                        db.Entry(invoiceProduct).State = System.Data.Entity.EntityState.Deleted;
+                    }
+                    db.SaveChanges();
+                }
+                LoadData();
+            }
+        }
+
+        private void BtnEdit_Click(object sender, RoutedEventArgs e)
+        {
+            
         }
 
         private void ButtonGoods_Click(object sender, RoutedEventArgs e)

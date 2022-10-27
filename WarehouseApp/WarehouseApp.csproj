@@ -65,7 +65,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Models\Recipient.cs" />
-    <Page Include="InvoicesWindow.xaml">
+    <Page Include="Windows\InvoicesWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -74,10 +74,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Models\Destination.cs" />
-    <Compile Include="EntityModel.cs" />
+    <Compile Include="Models\EntityModel.cs" />
     <Compile Include="Models\Invoice.cs" />
     <Compile Include="Models\InvoiceProduct.cs" />
-    <Compile Include="InvoicesWindow.xaml.cs">
+    <Compile Include="Windows\InvoicesWindow.xaml.cs">
       <DependentUpon>InvoicesWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
