@@ -15,11 +15,12 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using WarehouseApp.Windows;
 
 namespace WarehouseApp
 {
     /// <summary>
-    /// Логика взаимодействия для MainWindow.xaml
+    /// Логика взаимодействия для InvoicesWindow.xaml
     /// </summary>
     public partial class InvoicesWindow : Window
     {
@@ -47,11 +48,12 @@ namespace WarehouseApp
                     mainPanel.RowDefinitions.Add(new RowDefinition());
                     mainPanel.RowDefinitions.Add(new RowDefinition());
 
-                    var txtId = new TextBlock() { Foreground = Brushes.Orange, Text = "№ ", FontWeight = FontWeights.Bold};
+                    var txtId = new TextBlock() { Foreground = Brushes.Orange, Text = "№ ", TextAlignment = TextAlignment.Center, FontWeight = FontWeights.Bold};
+                    var txtDate = new TextBlock() {Text = "Дата: \n", FontWeight = FontWeights.Bold};
                     var txtName = new TextBlock() { Text = "Получатель: " };
                     var txtAddress = new TextBlock() { Text = "Пункт назначения: " };
 
-                    var gridGoods = new DataGrid() { IsReadOnly = true, AutoGenerateColumns = false, Margin = new Thickness(10)};
+                    var gridGoods = new DataGrid() { IsReadOnly = true, AutoGenerateColumns = false, FontFamily = new FontFamily("Comic Sans MS"), Margin = new Thickness(10)};
                     var goodsList = new ObservableCollection<DataObject>();
 
                     gridGoods.Columns.Add(new DataGridTextColumn() { Header = "Товар", Binding = new Binding("Name") });
@@ -75,6 +77,7 @@ namespace WarehouseApp
                     btnDelete.Click += BtnDelete_Click;
 
                     txtId.Text += invoice.InvoiceId.ToString();
+                    txtDate.Text += invoice.Date.ToString();
                     txtName.Text += db.Recipient.Find(invoice.RecipientId).Name;
                     txtAddress.Text += db.Destination.Find(invoice.DestinitonId).Address;
 
@@ -84,6 +87,7 @@ namespace WarehouseApp
                     Grid.SetRow(btnDelete, 2);
                     Grid.SetRow(txtPrice, 3);
                     Grid.SetColumn(txtPrice, 1);
+                    Grid.SetColumn(txtDate, 2);
                     Grid.SetColumn(btnEdit, 2);
                     Grid.SetColumn(btnDelete, 2);
                     Grid.SetColumn(txtName, 1);
@@ -91,6 +95,7 @@ namespace WarehouseApp
                     Grid.SetColumn(gridGoods, 1);
 
                     mainPanel.Children.Add(txtId);
+                    mainPanel.Children.Add(txtDate);
                     mainPanel.Children.Add(txtName);
                     mainPanel.Children.Add(btnEdit);
                     mainPanel.Children.Add(btnDelete);
@@ -130,7 +135,8 @@ namespace WarehouseApp
 
         private void ButtonGoods_Click(object sender, RoutedEventArgs e)
         {
-
+            new GoodsWindow().Show();
+            
         }
 
         private void ButtonInvoices_Click(object sender, RoutedEventArgs e)
@@ -140,6 +146,12 @@ namespace WarehouseApp
         private void ButtonDestinations_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void ButtonMakeInvoice_Click(object sender, RoutedEventArgs e)
+        {
+            new InvoiceMakeEditWindow().Show();
+            this.Close();
         }
     }
     public class DataObject

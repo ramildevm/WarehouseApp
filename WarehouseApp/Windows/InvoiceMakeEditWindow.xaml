@@ -1,0 +1,120 @@
+﻿<Window x:Class="WarehouseApp.Windows.InvoiceMakeEditWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WarehouseApp.Windows"
+        mc:Ignorable="d"
+        Title="Накладная" Height="650" Width="800" MinHeight="550" MinWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="80"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Height="80" Background="#F5BD2C">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.Resources>
+                <Style TargetType="Button">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="FontFamily" Value="Comic Sans MS"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="FontSize" Value="16"/>
+                    <Setter Property="FontWeight" Value="Bold"/>
+                </Style>
+                <Style TargetType="TextBlock">
+                    <Setter Property="FontSize" Value="24"/>
+                    <Setter Property="FontFamily" Value="Comic Sans MS"/>
+                    <Setter Property="FontWeight" Value="Bold"/>
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                </Style>
+            </Grid.Resources>
+            <TextBlock Grid.Column="0" Text="WareHouseApp" TextAlignment="Center"/>
+            <Button Grid.Column="1" Content="Список накладных" Click="ButtonInvoices_Click"/>
+            <Button Grid.Column="2" Content="Список товаров" Click="ButtonGoods_Click"/>
+            <Button Grid.Column="3" Content="Пункты назначения" Click="ButtonDestinations_Click"/>
+        </Grid>
+        <ScrollViewer Grid.Row="1">
+        <Grid Margin="0,0,0, 60" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                </Grid.RowDefinitions>
+            <Grid.Resources>
+                <Style TargetType="TextBlock">
+                    <Setter Property="FontSize" Value="16"/>
+                    <Setter Property="FontFamily" Value="Comic Sans MS"/>
+                    <Setter Property="FontWeight" Value="Bold"/>
+                    <Setter Property="TextAlignment" Value="Left"/>
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                    <Setter Property="Padding" Value="10"/>
+                </Style>
+                <Style TargetType="TextBox">
+                    <Setter Property="FontSize" Value="16"/>
+                    <Setter Property="FontFamily" Value="Comic Sans MS"/>
+                    <Setter Property="FontWeight" Value="Bold"/>
+                    <Setter Property="TextAlignment" Value="Center"/>
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                    <Setter Property="Margin" Value="10"/>
+                </Style>
+                <Style TargetType="Button">
+                    <Setter Property="Background" Value="Orange"/>
+                    <Setter Property="FontFamily" Value="Comic Sans MS"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="FontSize" Value="16"/>
+                    <Setter Property="FontWeight" Value="Bold"/>
+                </Style>
+            </Grid.Resources>
+                <TextBlock Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Text="Получатель" TextAlignment="Center" Foreground="Orange"/>
+                <TextBlock Grid.Column="0" Grid.Row="1"  Text="Имя:"/>
+            <TextBox Grid.Column="1" Grid.Row="1" MaxLength="100" x:Name="txtName"/>
+            <TextBlock Grid.Column="0" Grid.Row="2"  Text="Тип:"/>
+            <StackPanel Grid.Column="1" Grid.Row="2"  Orientation="Horizontal">
+                <RadioButton x:Name="rbtnNatural" Margin="10" GroupName="Type" VerticalAlignment="Center" Content="Физическое лицо" IsChecked="True"/>
+                <RadioButton x:Name="rbtnLegal" Margin="10" GroupName="Type" VerticalAlignment="Center" Content="Юридиечское лицо"/>
+            </StackPanel>
+            <TextBlock Grid.Column="0" Grid.Row="3"  Text="Номер документа:"/>
+                <TextBox Grid.Column="1" Grid.Row="3" MaxLength="4" x:Name="txtDocNumber"/>
+                <TextBlock Grid.Column="0" Grid.Row="4" Text="Серия документа:"/>
+            <TextBox Grid.Column="1" Grid.Row="4" MaxLength="6" x:Name="txtDocSeries"/>
+            <TextBlock Grid.Column="0" Grid.Row="5"  Text="Номер банка:"/>
+                <TextBox Grid.Column="1" Grid.Row="5" MaxLength="9" x:Name="txtBankNumber"/>
+            <TextBlock Grid.Column="0" Grid.Row="6"  Text="Название банка:"/>
+                <TextBox Grid.Column="1" Grid.Row="6" MaxLength="100" x:Name="txtBankName"/>
+            <TextBlock Grid.Column="0" Grid.Row="7" Grid.ColumnSpan="2" Text="Пункт назначения" TextAlignment="Center" Foreground="Orange"/>
+            
+            <TextBlock Grid.Column="0" Grid.Row="8"  Text="Индекс:"/>
+                <TextBox Grid.Column="1" Grid.Row="8" MaxLength="10" x:Name="txtIndex"/>
+            <TextBlock Grid.Column="0" Grid.Row="9"  Text="Страна:"/>
+                <TextBox Grid.Column="1" Grid.Row="9" MaxLength="60" x:Name="txtCountry"/>
+            <TextBlock Grid.Column="0" Grid.Row="10"  Text="Регион:"/>
+                <TextBox Grid.Column="1" Grid.Row="10" MaxLength="60" x:Name="txtRegion"/>
+            <TextBlock Grid.Column="0" Grid.Row="11"  Text="Населенный пункт:"/>
+                <TextBox Grid.Column="1" Grid.Row="11" MaxLength="60" x:Name="txtLocality"/>
+            <TextBlock Grid.Column="0" Grid.Row="12"  Text="Улица, дом:"/>
+                <TextBox Grid.Column="1" Grid.Row="12" MaxLength="60" x:Name="txtStreet"/>
+        </Grid>
+        </ScrollViewer>
+        <Button Content="Отмена" Click="ButtonCancel_Click" Background="#F5BD2C" FontFamily="Comic Sans MS" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Bottom"  Margin="20" Grid.Row="1" Height="40" Width="150"/>
+        <Button Content="Выбрать товары" Click="ButtonChoiceGoods_Click" Background="#F5BD2C" FontFamily="Comic Sans MS" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Bottom"  Margin="20" Grid.Row="1" Height="40" Width="150"/>
+    </Grid>
+</Window>

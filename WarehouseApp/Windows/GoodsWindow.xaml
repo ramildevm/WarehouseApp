@@ -1,0 +1,79 @@
+﻿<Window x:Class="WarehouseApp.Windows.GoodsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WarehouseApp.Windows"
+        mc:Ignorable="d"
+        Title="InvoiceMakeEditWindow" Height="650" Width="800" MinHeight="550" MinWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="80"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Height="80" Background="#F5BD2C">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.Resources>
+                <Style TargetType="Button">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="FontFamily" Value="Comic Sans MS"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="FontSize" Value="16"/>
+                    <Setter Property="FontWeight" Value="Bold"/>
+                </Style>
+                <Style TargetType="TextBlock">
+                    <Setter Property="FontSize" Value="24"/>
+                    <Setter Property="FontFamily" Value="Comic Sans MS"/>
+                    <Setter Property="FontWeight" Value="Bold"/>
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                </Style>
+            </Grid.Resources>
+            <TextBlock Grid.Column="0" Text="WareHouseApp" TextAlignment="Center"/>
+            <!--<Button Grid.Column="1" Content="Список накладных" Click="ButtonInvoices_Click"/>
+            <Button Grid.Column="2" Content="Список товаров" Click="ButtonGoods_Click"/>
+            <Button Grid.Column="3" Content="Пункты назначения" Click="ButtonDestinations_Click"/>-->
+        </Grid>
+        <DataGrid Margin="10,10,10,70" Grid.Row="1" x:Name="dgridGoods" FontFamily="Comic Sans MS" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Код товара" IsReadOnly="True" Binding="{Binding Path=ProductId}"/>
+                <DataGridTextColumn Header="Название" IsReadOnly="True" Binding="{Binding Path=Name}"/>
+                <DataGridTextColumn Header="Категория" IsReadOnly="True" Binding="{Binding Path=Category}"/>
+                <DataGridTemplateColumn Header="Количество" >
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox Name="txtQuantity" Text="0" MaxLength="2"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Цена" >
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox Name="txtPrice" Text="0" MaxLength="6"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Name="btnChoosed" Margin="5" Click="RowButton_Click" Background="Orange">Добавить</Button>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Margin="5" Click="RowDeleteButton_Click" Background="Orange" Content="Удалить"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+        <Button Content="Отмена" Click="ButtonCancel_Click" Background="#F5BD2C" FontFamily="Comic Sans MS" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Bottom"  Margin="20" Grid.Row="1" Height="40" Width="150"/>
+        <Button Content="Готово" Click="ButtonSave_Click" Background="#F5BD2C" FontFamily="Comic Sans MS" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Bottom"  Margin="20" Grid.Row="1" Height="40" Width="150"/>
+    </Grid>
+</Window>
