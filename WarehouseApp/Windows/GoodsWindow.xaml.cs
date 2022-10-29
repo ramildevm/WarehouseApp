@@ -40,27 +40,28 @@ namespace WarehouseApp.Windows
             public string Category { get; set; }
             public int Quantity { get; set; }
             public int Price { get; set; }
-            public InvoiceProductObject makeProduct(Product product)
+            public bool isEnabled { get; set; }
+            public string AddButtonText { get; set; } = "Добавить";
+
+            public InvoiceProductObject(Product product)
             {
-                return new InvoiceProductObject()
-                {
-                    ProductId = product.ProductId,
-                    Name = product.Name,
-                    Category = product.Category,
-                    Quantity = 0,
-                    Price = 0
-                };
+                ProductId = product.ProductId;
+                Name = product.Name;
+                Category = product.Category;
+                Quantity = 0;
+                Price = 0;
+                isEnabled = true;
+
             }
-            public InvoiceProductObject makeProduct(Product product, InvoiceProduct ip)
+            public InvoiceProductObject(Product product, InvoiceProduct ip)
             {
-                return new InvoiceProductObject()
-                {
-                    ProductId = product.ProductId,
-                    Name = product.Name,
-                    Category = product.Category,
-                    Quantity = ip.Quantity,
-                    Price = ip.Price
-                };
+                ProductId = product.ProductId;
+                Name = product.Name;
+                Category = product.Category;
+                Quantity = ip.Quantity;
+                Price = ip.Price;
+                isEnabled = false;
+                AddButtonText = "Добавлено";
             }
         }
         private void InitializeData()
@@ -68,47 +69,29 @@ namespace WarehouseApp.Windows
             List<InvoiceProductObject> list = new List<InvoiceProductObject>();
             using (var db = new EntityModel())
             {
-                foreach(var p in db.Product)
+                foreach (var p in db.Product)
                 {
-                    list.Add()
+                    if (isEditMode)
+                    {
+                        var ip = db.InvoiceProduct.ToList().Find(obj => obj.ProductId == p.ProductId && obj.InvoiceId == invoiceMakeEditWindow.invoice.InvoiceId);
+                        if (ip != null)
+                        {
+                            list.Add(new InvoiceProductObject(p, ip));
+                        }
+                        else
+                            list.Add(new InvoiceProductObject(p));
+                    }
+                    else
+                    {
+                        list.Add(new InvoiceProductObject(p));
+                    }
                 }
             }
             dgridGoods.ItemsSource = list;
             dgridGoods.CanUserAddRows = false;
-
             if (isEditMode)
             {
                 invoiceProducts = invoiceMakeEditWindow.invoiceProducts;
-                int i = 0;
-                foreach (var p in list)
-                {
-                    var ip = invoiceProducts.Find(obj => obj.ProductId == p.ProductId && obj.InvoiceId == invoiceMakeEditWindow.invoice.InvoiceId);
-                    if (ip != null)
-                    {
-                        DataGridRow row = (DataGridRow)dgridGoods.ItemContainerGenerator.ContainerFromIndex(i);
-                        MessageBox.Show(i.ToString());
-                        MessageBox.Show((row is null).ToString());
-                        var txtQuantity = dgridGoods.Columns[3].GetCellContent(row) as TextBox;
-                        var txtPrice = dgridGoods.Columns[4].GetCellContent(row) as TextBox;
-                        var btnChoosed = dgridGoods.Columns[5].GetCellContent(row) as Button;
-                        btnChoosed.Content = "Добавлено";
-                        btnChoosed.IsEnabled = false;
-                        txtPrice.Text = ip.Price.ToString();
-                        txtQuantity.Text = ip.Quantity.ToString();
-                    }
-                    i++;
-                }
-            }
-
-        }
-        public IEnumerable<DataGridRow> GetDataGridRows(DataGrid grid)
-        {
-            var itemsSource = grid.ItemsSource as IEnumerable;
-            if (null == itemsSource) yield return null;
-            foreach (var item in itemsSource)
-            {
-                var row = grid.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
-                if (null != row) yield return row;
             }
         }
         private void RowDeleteButton_Click(object sender, RoutedEventArgs e)
@@ -117,21 +100,28 @@ namespace WarehouseApp.Windows
                 if (vis is DataGridRow)
                 {
                     var row = (DataGridRow)vis;
-                    var item = row.Item as Product;
+                    var item = row.Item as InvoiceProductObject;
+                    var FW_element_Quantity = dgridGoods.Columns[3].GetCellContent(row);
+                    var FW_element_Price = dgridGoods.Columns[4].GetCellContent(row);
                     var FW_element_ChoosedCount = dgridGoods.Columns[5].GetCellContent(row);
+
+                    var txtQuantity = ((DataGridTemplateColumn)dgridGoods.Columns[3]).CellTemplate.FindName("txtQuantity", FW_element_Quantity) as TextBox;
+                    var txtPrice = ((DataGridTemplateColumn)dgridGoods.Columns[4]).CellTemplate.FindName("txtPrice", FW_element_Price) as TextBox;
                     var btnChoosed = ((DataGridTemplateColumn)dgridGoods.Columns[5]).CellTemplate.FindName("btnChoosed", FW_element_ChoosedCount) as Button;
                     btnChoosed.Content = "Добавить";
                     btnChoosed.IsEnabled = true;
+                    txtQuantity.IsEnabled = true;
+                    txtPrice.IsEnabled = true;
                     invoiceProducts.Remove(invoiceProducts.Find(obj => obj.ProductId == item.ProductId));
                 }
         }
-        private void RowButton_Click(object sender, RoutedEventArgs e)
+        private void RowAddButton_Click(object sender, RoutedEventArgs e)
         {
             for (var vis = sender as Visual; vis != null; vis = VisualTreeHelper.GetParent(vis) as Visual)
                 if (vis is DataGridRow)
                 {
                     var row = (DataGridRow)vis;
-                    var item = row.Item as Product;
+                    var item = row.Item as InvoiceProductObject;
                     var FW_element_Quantity = dgridGoods.Columns[3].GetCellContent(row);
                     var FW_element_Price = dgridGoods.Columns[4].GetCellContent(row);
                     var txtQuantity = ((DataGridTemplateColumn)dgridGoods.Columns[3]).CellTemplate.FindName("txtQuantity", FW_element_Quantity) as TextBox;
@@ -163,12 +153,15 @@ namespace WarehouseApp.Windows
                     });
                     btnChoosed.Content = "Добавлено";
                     btnChoosed.IsEnabled = false;
+                    txtQuantity.IsEnabled = false;
+                    txtPrice.IsEnabled = false;
                     break;
                 }
         }
 
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
         {
+            invoiceMakeEditWindow.invoiceProducts = null;
             this.Close();
         }
 
@@ -182,5 +175,6 @@ namespace WarehouseApp.Windows
             invoiceMakeEditWindow.invoiceProducts = invoiceProducts;
             this.Close();
         }
+
     }
 }

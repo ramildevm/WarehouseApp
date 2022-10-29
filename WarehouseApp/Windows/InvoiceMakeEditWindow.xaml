@@ -16,7 +16,6 @@
                 <ColumnDefinition Width="3*"/>
                 <ColumnDefinition Width="2*"/>
                 <ColumnDefinition Width="2*"/>
-                <ColumnDefinition Width="2*"/>
             </Grid.ColumnDefinitions>
             <Grid.Resources>
                 <Style TargetType="Button">
@@ -35,8 +34,7 @@
             </Grid.Resources>
             <TextBlock Grid.Column="0" Text="WareHouseApp" TextAlignment="Center"/>
             <Button Grid.Column="1" Content="Список накладных" Click="ButtonInvoices_Click"/>
-            <Button Grid.Column="2" Content="Список товаров" Click="ButtonGoods_Click"/>
-            <Button Grid.Column="3" Content="Пункты назначения" Click="ButtonDestinations_Click"/>
+            <Button Grid.Column="2" Content="Пункты назначения" Click="ButtonDestinations_Click"/>
         </Grid>
         <ScrollViewer Grid.Row="1">
         <Grid Margin="0,0,0, 60" >

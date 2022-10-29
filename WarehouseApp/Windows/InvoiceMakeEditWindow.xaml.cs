@@ -35,15 +35,10 @@ namespace WarehouseApp.Windows
 
         private void LoadData()
         {
-            invoiceProducts = new List<InvoiceProduct>();
             using (var db = new EntityModel())
             {
                 recipient = invoice.Recipient;
                 destination = invoice.Destination;
-                foreach (var ip in db.InvoiceProduct.Where(obj => obj.InvoiceId == invoice.InvoiceId))
-                {
-                    invoiceProducts.Add(ip);
-                }
             }
             txtName.Text = recipient.Name;
             txtDocNumber.Text = recipient.DocNumber.ToString();
@@ -60,12 +55,14 @@ namespace WarehouseApp.Windows
             txtCountry.Text = destination.Country;
             txtRegion.Text = destination.Region;
             txtLocality.Text = destination.Locality;
-            txtStreet.Text = address[3] + ", " + address[4];
-        }
-
-        private void ButtonGoods_Click(object sender, RoutedEventArgs e)
-        {
-
+            try
+            {
+                txtStreet.Text = address[3] + ", " + address[4];
+            }
+            catch (IndexOutOfRangeException)
+            {
+                txtStreet.Text = address[3];
+            }
         }
 
         private void ButtonInvoices_Click(object sender, RoutedEventArgs e)
@@ -117,14 +114,30 @@ namespace WarehouseApp.Windows
             destination.Region = fieldsData[7];
             destination.Locality = fieldsData[8];
 
+            if (isEditMode)
+            {
+                invoiceProducts = new List<InvoiceProduct>();
+                using (var db = new EntityModel())
+                {
+                    foreach (var ip in db.InvoiceProduct.Where(obj => obj.InvoiceId == invoice.InvoiceId))
+                    {
+                        invoiceProducts.Add(ip);
+                    }
+                }
+            }
+            List<InvoiceProduct> oldInvoiceProducts = new List<InvoiceProduct>();
+            if (isEditMode)
+                oldInvoiceProducts = invoiceProducts.ToList();
             this.Hide();
             new GoodsWindow(this, isEditMode).ShowDialog();
             this.Show();
 
+            if (invoiceProducts == null)
+                return;
+            else if (Enumerable.SequenceEqual(oldInvoiceProducts, invoiceProducts))
+                return;
             if (!isEditMode)
             {
-                if (invoiceProducts == null)
-                    return;
                 using (var db = new EntityModel())
                 {
                     recipient = db.Recipient.Add(recipient);
@@ -152,19 +165,34 @@ namespace WarehouseApp.Windows
                     db.Entry(recipient).State = System.Data.Entity.EntityState.Modified;
                     db.Entry(destination).State = System.Data.Entity.EntityState.Modified;
                     db.Entry(invoice).State = System.Data.Entity.EntityState.Modified;
-
-                    foreach (var ip in db.InvoiceProduct.Where(obj => obj.InvoiceId == invoice.InvoiceId).ToList())
+                    invoiceProducts.ForEach(obj => obj.InvoiceId = invoice.InvoiceId);
+                    
+                    foreach (var p in db.Product)
                     {
-                        if (invoiceProducts.Any(obj => obj.ProductId == ip.ProductId))
-                            db.Entry(ip).State = System.Data.Entity.EntityState.Modified;
-                        else
-                            db.Entry(ip).State = System.Data.Entity.EntityState.Deleted;
+                        var ipdb = db.InvoiceProduct.ToList().Find(obj => obj.InvoiceId == invoice.InvoiceId && obj.ProductId == p.ProductId);
+                        var ip = invoiceProducts.Find(obj => obj.InvoiceId == invoice.InvoiceId && obj.ProductId == p.ProductId);
+                        if (ipdb != null)
+                        {
+                            if (ip != null)
+                            {
+                                ipdb.Quantity = ip.Quantity;
+                                ipdb.Price = ip.Price;
+                                 db.Entry(ipdb).State = System.Data.Entity.EntityState.Modified;
+                            }
+                            else
+                                db.Entry(ipdb).State = System.Data.Entity.EntityState.Deleted;
+                            continue;
+                        }
+                        if (ip != null)
+                        {
+                            ip.InvoiceId = invoice.InvoiceId;
+                            db.InvoiceProduct.Add(ip);
+                        }
                     }
                     int res = db.SaveChanges();
                     if (res > 0)
                         MessageBox.Show("Накладная обновлена!", "Внимание!");
                 }
-
             }
             new InvoicesWindow().Show();
             this.Close();

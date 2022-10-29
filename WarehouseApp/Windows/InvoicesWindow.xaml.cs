@@ -135,12 +135,6 @@ namespace WarehouseApp
             this.Close();
         }
 
-        private void ButtonGoods_Click(object sender, RoutedEventArgs e)
-        {
-            
-            
-        }
-
         private void ButtonInvoices_Click(object sender, RoutedEventArgs e)
         {
 
