@@ -46,7 +46,7 @@
                 <DataGridTemplateColumn Header="Количество" >
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBox Name="txtQuantity" Text="0" MaxLength="2"/>
+                            <TextBox Name="txtQuantity" Text="{Binding Path=Quantity}" MaxLength="2"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

@@ -130,7 +130,9 @@ namespace WarehouseApp
 
         private void BtnEdit_Click(object sender, RoutedEventArgs e)
         {
-            
+            var invoice = (sender as Button).Tag as Invoice;
+            new InvoiceMakeEditWindow(invoice).Show();
+            this.Close();
         }
 
         private void ButtonGoods_Click(object sender, RoutedEventArgs e)
