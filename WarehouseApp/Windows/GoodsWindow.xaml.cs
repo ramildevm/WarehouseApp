@@ -111,6 +111,7 @@ namespace WarehouseApp.Windows
                 return;
             }
             invoiceMakeEditWindow.invoiceProducts = invoiceProducts;
+            this.Close();
         }
     }
 }

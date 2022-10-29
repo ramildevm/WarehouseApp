@@ -41,6 +41,7 @@ namespace WarehouseApp.Windows
 
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
         {
+            new InvoicesWindow().Show();
             this.Close();
         }
 
@@ -52,7 +53,7 @@ namespace WarehouseApp.Windows
 
             if (result != "Ок")
             {
-                MessageBox.Show("Некорректные данные!", "Внимание!");
+                MessageBox.Show(result, "Внимание!");
                 return;
             }
             bool check = rbtnNatural.IsChecked ?? false;
@@ -75,7 +76,9 @@ namespace WarehouseApp.Windows
                 Region = fieldsData[7],
                 Locality = fieldsData[8]
             };
-            new GoodsWindow(this).Show();
+            this.Hide();
+            new GoodsWindow(this).ShowDialog();
+            this.Show();
             if (invoiceProducts == null)
                 return;
             using(var db = new EntityModel())
@@ -93,7 +96,11 @@ namespace WarehouseApp.Windows
                     ip.InvoiceId = invoice.InvoiceId;
                     db.InvoiceProduct.Add(ip);
                 }
-                db.SaveChanges();
+                int res = db.SaveChanges();
+                if (res > 0)
+                    MessageBox.Show("Накладная добавлена!", "Внимание!");
+                new InvoicesWindow().Show();
+                this.Close();
             }
 
         }

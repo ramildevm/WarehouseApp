@@ -135,7 +135,7 @@ namespace WarehouseApp
 
         private void ButtonGoods_Click(object sender, RoutedEventArgs e)
         {
-            new GoodsWindow().Show();
+            
             
         }
 
