@@ -141,7 +141,8 @@ namespace WarehouseApp
         }
         private void ButtonDestinations_Click(object sender, RoutedEventArgs e)
         {
-
+            new DestinationsWindow().Show();
+            this.Close();
         }
 
         private void ButtonMakeInvoice_Click(object sender, RoutedEventArgs e)

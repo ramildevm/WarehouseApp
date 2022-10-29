@@ -65,6 +65,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Models\Recipient.cs" />
+    <Page Include="Windows\DestinationsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Windows\GoodsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -85,6 +89,9 @@
     <Compile Include="Models\EntityModel.cs" />
     <Compile Include="Models\Invoice.cs" />
     <Compile Include="Models\InvoiceProduct.cs" />
+    <Compile Include="Windows\DestinationsWindow.xaml.cs">
+      <DependentUpon>DestinationsWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\GoodsWindow.xaml.cs">
       <DependentUpon>GoodsWindow.xaml</DependentUpon>
     </Compile>
@@ -126,6 +133,12 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\logo.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\logo.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
