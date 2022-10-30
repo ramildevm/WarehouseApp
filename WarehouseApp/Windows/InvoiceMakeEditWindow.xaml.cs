@@ -67,7 +67,7 @@ namespace WarehouseApp.Windows
 
         private void ButtonInvoices_Click(object sender, RoutedEventArgs e)
         {
-            new InvoicesWindow().Show();
+            new InvoicesWindow(1).Show();
             this.Close();
         }
         private void ButtonDestinations_Click(object sender, RoutedEventArgs e)
@@ -78,7 +78,7 @@ namespace WarehouseApp.Windows
 
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
         {
-            new InvoicesWindow().Show();
+            new InvoicesWindow(1).Show();
             this.Close();
         }
 
@@ -190,7 +190,7 @@ namespace WarehouseApp.Windows
                         MessageBox.Show("Накладная обновлена!", "Внимание!");
                 }
             }
-            new InvoicesWindow().Show();
+            new InvoicesWindow(1).Show();
             this.Close();
 
         }

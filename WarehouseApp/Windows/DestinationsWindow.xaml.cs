@@ -146,16 +146,29 @@ namespace WarehouseApp.Windows
                     range.Text = country.Key;                    
                     range.InsertParagraphAfter();
 
-                    var countryInvoiceProducts = db.InvoiceProduct.Where(obj => obj.Invoice.Destination.Country == country.Key)
+                    var countryInvoiceProductsQuantity = db.InvoiceProduct.Where(obj => obj.Invoice.Destination.Country == country.Key)
                         .GroupBy(obj => obj.Product.Name)
                         .ToList()
                         .Select(obj =>new KeyValuePair<string,int>( obj.Key, obj.Sum(o => (int?)o.Quantity) ?? 0 ))
                         .ToDictionary(obj=>obj.Key, obj=>obj.Value);
-                    var countryMostSelledProduct = countryInvoiceProducts.OrderBy(obj=>obj.Value).Last();
+                    var countryMostSelledProductQuantity = countryInvoiceProductsQuantity.OrderBy(obj=>obj.Value).Last();
 
                     Word.Paragraph paragraph = document.Paragraphs.Add();
                     range = paragraph.Range;
-                    range.Text = $"Самый продаваемый товар в стране: {countryMostSelledProduct.Key} ({countryMostSelledProduct.Value}шт.)";
+                    range.Text = $"Самый продаваемый товар в стране: {countryMostSelledProductQuantity.Key} ({countryMostSelledProductQuantity.Value}шт.)";
+                    range.Font.Size = 14;
+                    range.InsertParagraphAfter();
+
+                    var countryInvoiceProductsPrices = db.InvoiceProduct.Where(obj => obj.Invoice.Destination.Country == country.Key)
+                        .GroupBy(obj => obj.Product.Name)
+                        .ToList()
+                        .Select(obj => new KeyValuePair<string, int>(obj.Key, obj.Sum(o => (int?)o.Price) ?? 0))
+                        .ToDictionary(obj => obj.Key, obj => obj.Value);
+                    var countryMostSelledProductPrice = countryInvoiceProductsPrices.OrderBy(obj => obj.Value).Last();
+
+                    paragraph = document.Paragraphs.Add();
+                    range = paragraph.Range;
+                    range.Text = $"Самый прибыльный товар: {countryMostSelledProductPrice.Key} (Общая выручка: {countryMostSelledProductPrice.Value} руб.)";
                     range.Font.Size = 14;
                     range.InsertParagraphAfter();
 
@@ -232,7 +245,7 @@ namespace WarehouseApp.Windows
 
         private void ButtonInvoices_Click(object sender, RoutedEventArgs e)
         {
-            new InvoicesWindow().Show();
+            new InvoicesWindow(1).Show();
             this.Close();
         }
 

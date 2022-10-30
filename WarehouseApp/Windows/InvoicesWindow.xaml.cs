@@ -16,6 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WarehouseApp.Windows;
+using Word = Microsoft.Office.Interop.Word;
 
 namespace WarehouseApp
 {
@@ -24,10 +25,15 @@ namespace WarehouseApp
     /// </summary>
     public partial class InvoicesWindow : Window
     {
+        public InvoicesWindow(int flag)
+        {
+            InitializeComponent();
+            if (flag == 1)
+                ButtonInvoices_Click(this, new RoutedEventArgs());
+        }
         public InvoicesWindow()
         {
             InitializeComponent();
-            LoadData();
         }
 
         private void LoadData()
@@ -75,6 +81,8 @@ namespace WarehouseApp
                     btnEdit.Click += BtnEdit_Click;
                     var btnDelete = new Button() { Content = "Удалить", Tag = invoice };
                     btnDelete.Click += BtnDelete_Click;
+                    var btnMakeDoc = new Button() {Margin = new Thickness(5,10,0,10),HorizontalAlignment=HorizontalAlignment.Left, Width = 160, Background=Brushes.LightGray, Content = "Сохранить в PDF", Tag = invoice };
+                    btnMakeDoc.Click += BtnMakeDoc_Click;
 
                     txtId.Text += invoice.InvoiceId.ToString();
                     txtDate.Text += invoice.Date.ToString();
@@ -86,7 +94,9 @@ namespace WarehouseApp
                     Grid.SetRow(btnEdit, 1);
                     Grid.SetRow(btnDelete, 2);
                     Grid.SetRow(txtPrice, 3);
+                    Grid.SetRow(btnMakeDoc, 3);
                     Grid.SetColumn(txtPrice, 1);
+                    Grid.SetColumn(btnMakeDoc, 1);
                     Grid.SetColumn(txtDate, 2);
                     Grid.SetColumn(btnEdit, 2);
                     Grid.SetColumn(btnDelete, 2);
@@ -99,14 +109,104 @@ namespace WarehouseApp
                     mainPanel.Children.Add(txtName);
                     mainPanel.Children.Add(btnEdit);
                     mainPanel.Children.Add(btnDelete);
+                    mainPanel.Children.Add(txtPrice);
+                    mainPanel.Children.Add(btnMakeDoc);
                     mainPanel.Children.Add(txtAddress);
                     mainPanel.Children.Add(gridGoods);
-                    mainPanel.Children.Add(txtPrice);
 
                     InvoicesPanel.Children.Add(mainPanel);
                 }
             }
 
+        }
+
+        private void BtnMakeDoc_Click(object sender, RoutedEventArgs e)
+        {
+            var invoice = (sender as Button).Tag as Invoice;
+            var app = new Word.Application();
+            Word.Document document = app.Documents.Add();
+
+            Word.Paragraph paragraph = document.Paragraphs.Add();
+            Word.Range range = paragraph.Range;
+            range.Text = "№" + invoice.InvoiceId.ToString();
+            range.Font.Size = 16;
+            range.ParagraphFormat.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
+            range.Font.Bold = 1;
+            range.InsertParagraphAfter();
+
+            Word.Paragraph paragraphOther = document.Paragraphs.Add();
+            paragraphOther.Range.Text = "Дата: " + invoice.Date.ToString();
+            paragraphOther.Range.Font.Size = 14;
+            paragraphOther.Range.Font.Bold = 1;
+            paragraphOther.Range.ParagraphFormat.Alignment = Word.WdParagraphAlignment.wdAlignParagraphLeft;
+            paragraphOther.Range.InsertParagraphAfter();
+
+            paragraphOther = document.Paragraphs.Add();
+            paragraphOther.Range.Bold = 0;
+            if (invoice.Recipient.Type == "Физическое лицо")
+                paragraphOther.Range.Text = $"Грузополучатель: {invoice.Recipient.Name}, {invoice.Recipient.DocSeries} {invoice.Recipient.DocNumber}, № {invoice.Recipient.BankNumber} \"{invoice.Recipient.BankName}\"";
+            else
+                paragraphOther.Range.Text = $"Грузополучатель: {invoice.Recipient.Name}, № {invoice.Recipient.BankNumber} \"{invoice.Recipient.BankName}\"";
+            paragraphOther.Range.Font.Size = 14;
+            paragraphOther.Range.InsertParagraphAfter();
+
+            paragraphOther = document.Paragraphs.Add();
+            paragraphOther.Range.Bold = 0;
+            paragraphOther.Range.Text = $"Пункт назначения: {invoice.Destination.Address}";
+            paragraphOther.Range.Font.Size = 14;
+            paragraphOther.Range.InsertParagraphAfter();
+
+            using (var db = new EntityModel())
+            {
+                var allProducts = db.InvoiceProduct.Where(obj => obj.InvoiceId == invoice.InvoiceId).ToList();
+                Word.Paragraph tableParagraph = document.Paragraphs.Add();
+                Word.Range tableRange = tableParagraph.Range;
+                Word.Table regionsTable = document.Tables.Add(tableRange, allProducts.Count() + 1, 4);
+                regionsTable.Borders.InsideLineStyle = regionsTable.Borders.OutsideLineStyle = Word.WdLineStyle.wdLineStyleSingle;
+                regionsTable.Range.Cells.VerticalAlignment = Word.WdCellVerticalAlignment.wdCellAlignVerticalCenter;
+                Word.Range cellRange;
+                cellRange = regionsTable.Cell(1, 1).Range;
+                cellRange.Text = "Название товара";
+
+                cellRange = regionsTable.Cell(1, 2).Range;
+                cellRange.Text = "Категория";
+                cellRange = regionsTable.Cell(1, 3).Range;
+                cellRange.Text = "Количество";
+                cellRange = regionsTable.Cell(1, 4).Range;
+                cellRange.Text = "Цена";
+                regionsTable.Rows[1].Range.Bold = 1;
+                regionsTable.Rows[1].Range.ParagraphFormat.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
+
+                int iter = 1;
+                foreach(var product in allProducts)
+                {
+                    cellRange = regionsTable.Cell(iter + 1, 1).Range;
+                    cellRange.Text = product.Product.Name;
+                    cellRange.ParagraphFormat.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
+                    cellRange.Font.Bold = 0;
+                    cellRange = regionsTable.Cell(iter + 1, 2).Range;
+                    cellRange.Text = product.Product.Category;
+                    cellRange.ParagraphFormat.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
+                    cellRange.Font.Bold = 0;
+                    cellRange = regionsTable.Cell(iter + 1, 3).Range;
+                    cellRange.Text = product.Quantity.ToString();
+                    cellRange.ParagraphFormat.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
+                    cellRange.Font.Bold = 0;
+                    cellRange = regionsTable.Cell(iter + 1, 4).Range;
+                    cellRange.Text = product.Price.ToString();
+                    cellRange.ParagraphFormat.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
+                    cellRange.Font.Bold = 0;
+                    iter++;
+                }
+                paragraphOther = document.Paragraphs.Add();
+                paragraphOther.Range.Text = $"Общая цена: {allProducts.Sum(obj=>(int?)obj.Price)??0} руб.";
+                paragraphOther.Range.Font.Size = 14;
+                paragraphOther.Range.Font.Bold = 1;
+                paragraphOther.Range.ParagraphFormat.Alignment = Word.WdParagraphAlignment.wdAlignParagraphRight;
+            }
+            app.Visible = true;
+            string fileName = "invoice№"+invoice.InvoiceId.ToString();
+            document.SaveAs2($@"D:\{fileName}.pdf", Word.WdExportFormat.wdExportFormatPDF);
         }
 
         private void BtnDelete_Click(object sender, RoutedEventArgs e)
@@ -148,6 +248,13 @@ namespace WarehouseApp
         {
             new InvoiceMakeEditWindow().Show();
             this.Close();
+        }
+
+        private void ButtonInvoices_Click(object sender, RoutedEventArgs e)
+        {
+            btnMakeInvoice.Visibility = Visibility.Visible;
+            txtGreating.Visibility = Visibility.Collapsed;
+            LoadData();
         }
     }
     public class DataObject
