@@ -35,7 +35,7 @@
             </Grid.Resources>
             <Image Margin="10" Source="/Resources/logo.png" />
             <TextBlock Grid.Column="1" Text="WareHouseApp" TextAlignment="Left"/>
-            <Button Grid.Column="2" Content="Список накладных" Click="ButtonInvoices_Click"/>
+            <Button Grid.Column="2" Content="Список накладных" />
             <Button Grid.Column="3" Content="Пункты назначения" Click="ButtonDestinations_Click"/>
         </Grid>
         <ScrollViewer Background="#E6E6E6" Grid.Row="1">

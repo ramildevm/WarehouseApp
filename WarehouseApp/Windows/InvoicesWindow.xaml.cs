@@ -117,6 +117,8 @@ namespace WarehouseApp
                 using(var db = new EntityModel())
                 {
                     var invoice = (sender as Button).Tag as Invoice;
+                    db.Entry(invoice.Recipient).State = System.Data.Entity.EntityState.Deleted;
+                    db.Entry(invoice.Destination).State = System.Data.Entity.EntityState.Deleted;
                     db.Entry(invoice).State = System.Data.Entity.EntityState.Deleted;
                     foreach (var invoiceProduct in db.InvoiceProduct.Where(obj => obj.InvoiceId == invoice.InvoiceId))
                     {
@@ -135,10 +137,7 @@ namespace WarehouseApp
             this.Close();
         }
 
-        private void ButtonInvoices_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
+        
         private void ButtonDestinations_Click(object sender, RoutedEventArgs e)
         {
             new DestinationsWindow().Show();

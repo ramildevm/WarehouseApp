@@ -72,7 +72,8 @@ namespace WarehouseApp.Windows
         }
         private void ButtonDestinations_Click(object sender, RoutedEventArgs e)
         {
-
+            new DestinationsWindow().Show();
+            this.Close();
         }
 
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
@@ -125,16 +126,11 @@ namespace WarehouseApp.Windows
                     }
                 }
             }
-            List<InvoiceProduct> oldInvoiceProducts = new List<InvoiceProduct>();
-            if (isEditMode)
-                oldInvoiceProducts = invoiceProducts.ToList();
             this.Hide();
             new GoodsWindow(this, isEditMode).ShowDialog();
             this.Show();
 
             if (invoiceProducts == null)
-                return;
-            else if (Enumerable.SequenceEqual(oldInvoiceProducts, invoiceProducts))
                 return;
             if (!isEditMode)
             {

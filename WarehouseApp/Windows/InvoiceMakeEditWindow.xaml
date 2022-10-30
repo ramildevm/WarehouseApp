@@ -102,7 +102,7 @@
             <TextBlock Grid.Column="0" Grid.Row="7" Grid.ColumnSpan="2" Text="Пункт назначения" TextAlignment="Center" Foreground="Orange"/>
             
             <TextBlock Grid.Column="0" Grid.Row="8"  Text="Индекс:"/>
-                <TextBox Grid.Column="1" Grid.Row="8" MaxLength="10" x:Name="txtIndex"/>
+                <TextBox Grid.Column="1" Grid.Row="8" MaxLength="6" x:Name="txtIndex"/>
             <TextBlock Grid.Column="0" Grid.Row="9"  Text="Страна:"/>
                 <TextBox Grid.Column="1" Grid.Row="9" MaxLength="60" x:Name="txtCountry"/>
             <TextBlock Grid.Column="0" Grid.Row="10"  Text="Регион:"/>
