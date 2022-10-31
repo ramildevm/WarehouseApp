@@ -25,7 +25,7 @@ namespace WarehouseApp.Windows
         {
             InitializeComponent();
             LoadButtons();
-            LoadData("all");
+            LoadData("Все");
         }
 
         private void LoadButtons()
@@ -59,14 +59,19 @@ namespace WarehouseApp.Windows
             List<Destination> destinationsList;
             using(var db = new EntityModel())
             {
-                if (filter == "all")
+                if (filter == "Все")
                     destinationsList = db.Destination.OrderBy(obj => obj.Address).ToList();
                 else
                     destinationsList = db.Destination.Where(obj => obj.Region == filter).OrderBy(obj => obj.Address).ToList();
             }
-            foreach(var destination in destinationsList)
+            var mainPanel = new Grid() { Margin=new Thickness(10,10,10,0)};
+            var txtFilter = new TextBlock() { TextAlignment = TextAlignment.Center, Foreground= Brushes.Orange, Text = filter, FontWeight = FontWeights.Bold, FontSize = 16 };
+            mainPanel.Children.Add(txtFilter);
+
+            contentPanel.Children.Add(mainPanel);
+            foreach (var destination in destinationsList)
             {
-                var mainPanel = new Grid();
+                mainPanel = new Grid();
                 mainPanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(200) });
                 mainPanel.ColumnDefinitions.Add(new ColumnDefinition());
 
@@ -252,7 +257,7 @@ namespace WarehouseApp.Windows
         private void ButtonAll_Click(object sender, RoutedEventArgs e)
         {
             contentPanel.Children.Clear();
-            LoadData("all");
+            LoadData("Все");
         }
     }
 }
