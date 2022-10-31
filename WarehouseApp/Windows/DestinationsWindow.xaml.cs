@@ -238,6 +238,7 @@ namespace WarehouseApp.Windows
             }
             app.Visible = true;
             document.SaveAs2(@"D:\outputFileWord.pdf", Word.WdExportFormat.wdExportFormatPDF);
+            MessageBox.Show($@"Документ сохранён по пути D:\outputFileWord.pdf","Результат");
         }
 
         private string FindPercent(int number, int totalnNumber)

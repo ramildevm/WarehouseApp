@@ -41,7 +41,7 @@ namespace WarehouseApp
             InvoicesPanel.Children.Clear();
             using (var db = new EntityModel())
             {
-                List<Invoice> invoices = db.Invoice.ToList();
+                List<Invoice> invoices = db.Invoice.OrderByDescending(obj=>obj.Date).ToList();
                 foreach(var invoice in invoices)
                 {
                     var mainPanel = new Grid();
@@ -207,6 +207,7 @@ namespace WarehouseApp
             app.Visible = true;
             string fileName = "invoice№"+invoice.InvoiceId.ToString();
             document.SaveAs2($@"D:\{fileName}.pdf", Word.WdExportFormat.wdExportFormatPDF);
+            MessageBox.Show($@"Документ сохранён по пути D:\{fileName}.pdf", "Результат");
         }
 
         private void BtnDelete_Click(object sender, RoutedEventArgs e)
