@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:WarehouseApp.Windows"
         mc:Ignorable="d"
         Icon="/Resources/logo.ico"
-        Title="DestinationsWindow" Height="650" Width="950" MinHeight="550" MinWidth="900">
+        Title="Пункты назначения" Height="650" Width="950" MinHeight="550" MinWidth="900">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="80"/>
